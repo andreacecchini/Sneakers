@@ -54,11 +54,11 @@ int main(){
 void randomString(char *cryptedString, size_t lenght) {
     srand(time(NULL));
     //Questo ciclo permette di riempire i valori del vettore stringa con valori casuali
-    for (int i = 0; i < lenght-1; i++)
+    for (int i = 0; i < lenght - 1; i++)
     {
         cryptedString[i] = 'A' + (rand() % 26);
     }
-    cryptedString[lenght] = '\0';
+    cryptedString[lenght-1] = '\0';
 }
 
 bool isDecrypted(char *cryptedString, char *original){
@@ -97,7 +97,7 @@ void decrypted(char *cryptedString, char *result){
              Queste istruzioni mi permettono di dare l'effetto ottico desiderato, come da clip.
             */
             if(cryptedString[j]!= result[j])
-                cryptedString[j] = 'A' + (rand() % 26);
+                cryptedString[j] = 11 + rand()% (40-11+1);
             //Stampa carattere per carattere la stringa con un carattere "decryptato" in piu`
             printf("%c", cryptedString[j]);
         }
