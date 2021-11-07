@@ -13,6 +13,20 @@
 #include <stdlib.h>
 #define LENGHT 100
 
+#ifdef __MINGW32__
+#define NEED_COLOR_FIX
+#endif
+
+#ifdef NEED_COLOR_FIX
+#include <windows.h>
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#endif
+
+#define CON_RESET       "\033[0m"
+
+
+
+#define COLOR_CYAN    "\e[0;36m"
 
 //DICHIARAZIONE DELLE FUNZIONI
 
@@ -35,6 +49,17 @@ void waiting(float seconds);
 
 
 int main(){
+
+    #ifdef NEED_COLOR_FIX
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (handle != INVALID_HANDLE_VALUE) {
+        DWORD mode = 0;
+        if (GetConsoleMode(handle, &mode)) {
+            mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            SetConsoleMode(handle, mode);
+        }
+    }
+    #endif
     //LENGHT + \0
     char initString[LENGHT+1];
     char cryptedString[LENGHT+1];
@@ -73,9 +98,7 @@ bool isDecrypted(char *cryptedString, char *original){
 
 void decrypted(char *cryptedString, char *result){
     srand(time(NULL));
-    int index[strlen(cryptedString)];
     int i;
-    int count= 0;
     printf("Stringa criptata\n%s", cryptedString);
     //array[0] = result[0];
     //Ritorno alla parte inziale della stringa
@@ -97,9 +120,15 @@ void decrypted(char *cryptedString, char *result){
              Queste istruzioni mi permettono di dare l'effetto ottico desiderato, come da clip.
             */
             if(cryptedString[j]!= result[j])
+            {
                 cryptedString[j] = 11 + rand()% (40-11+1);
-            //Stampa carattere per carattere la stringa con un carattere "decryptato" in piu`
-            printf("%c", cryptedString[j]);
+
+                //Stampa carattere per carattere la stringa con un carattere "decryptato" in piu`
+                printf("%c", cryptedString[j]);
+            }
+            else
+                printf(COLOR_CYAN  "%c" CON_RESET, cryptedString[j]);
+
         }
         //0.05s delay per generare l'effetto ottico e non avere il risultato immediatamente
         waiting(0.05);
